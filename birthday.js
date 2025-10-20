@@ -3,11 +3,13 @@ const cake = document.getElementById("cake");
 const letter = document.getElementById("letter");
 const envelope = document.querySelector(".envelope");
 const bg = document.getElementById("background");
+const music = document.getElementById("bg-music"); // 🎵 Get audio element
 
 // 🎂 Cake → Letter animation
 btn.addEventListener("click", () => {
   confettiRain();
-   if (letter.classList.contains("hidden")) {
+
+  if (letter.classList.contains("hidden")) {
     cake.classList.add("hidden");
     letter.classList.remove("hidden");
 
@@ -19,13 +21,10 @@ btn.addEventListener("click", () => {
 
     // Change button text
     btn.textContent = "Click for Confetti 🎉";
-  } 
-  // If letter already visible → trigger confetti
-  else {
+  } else {
     confettiRain();
   }
 });
-
 
 // 🎉 Confetti animation when letter opens
 function confettiRain() {
@@ -74,3 +73,33 @@ function createFallingItem() {
 }
 
 setInterval(createFallingItem, 400);
+
+// 🎵 Auto-play background music with fade-in
+window.addEventListener("load", () => {
+  const music = document.getElementById("bg-music");
+  music.muted = true; // start muted so autoplay works
+  music.volume = 0;
+
+  // Try to play it immediately
+  const playPromise = music.play();
+
+  if (playPromise !== undefined) {
+    playPromise
+      .then(() => {
+        // ✅ Fade in after 1 second
+        setTimeout(() => {
+          music.muted = false;
+          let vol = 0;
+          const fade = setInterval(() => {
+            if (vol < 1) {
+              vol += 0.05;
+              music.volume = vol;
+            } else {
+              clearInterval(fade);
+            }
+          }, 200);
+        }, 1000);
+      })
+      .catch(err => console.log("Autoplay blocked:", err));
+  }
+});
